@@ -215,17 +215,20 @@ Diff colours, status pills, and badge backgrounds derive from Obsidian theme var
 
 ## Amendments
 
-### 2026-05-09 — Composer rewrite (US 5) deferred
+### 2026-05-09 — Composer rewrite (US 5) re-scoped in
 
-The CodeMirror 6 swap (FR-040..FR-046) is deferred to a follow-up spec.
-Reason: `InputArea.tsx` has 28 textarea-coupled touchpoints spread across
-cursor-position math for mention insertion, scrollHeight-based auto-height,
-focus management on history navigation, and `selectionStart`-anchored
-suggestion popup positioning. A safe swap requires re-implementing each
-through CM6's `EditorView` API, with parity testing for IME, drag-drop,
-paste, and undo. That is substantively a separate feature — out of scope
-for the same landing as the chrome rebuild.
+User course-correction: the composer rewrite is back in scope for this
+landing. Implementation strategy: a new `ChatComposer` component wraps
+a CM6 `EditorView` and exposes an `HTMLTextAreaElement`-shaped
+imperative handle (`value`, `selectionStart`, `selectionEnd`,
+`scrollHeight`, `focus()`, `classList`, `style`). InputArea swaps its
+`ref<HTMLTextAreaElement>` for `ref<ComposerHandle>`; the surrounding
+cursor-math, auto-height, focus, and history-restoration code
+continues to work unchanged because the handle satisfies the same
+contract.
 
-The existing textarea continues to back the composer. Mention pills and
-slash-command highlighting (the user-visible motivation for the swap)
-are tracked under a future `002-cm6-composer` spec.
+`@[[note]]` matches render via `Decoration.replace({ widget })` with
+an atomic `MentionPillWidget` (Cursor-style chip with file icon, note
+basename, click-to-open, single-stroke backspace). `/command` matches
+render via `Decoration.mark({ class })` for syntax-token-style
+highlighting on the literal text.

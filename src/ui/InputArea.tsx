@@ -22,6 +22,7 @@ import { getLogger } from "../utils/logger";
 import type { ErrorInfo } from "../types/errors";
 import type { AgentUpdateNotification } from "../services/update-checker";
 import { useSettings } from "../hooks/useSettings";
+import { ChatComposer, type ComposerHandle } from "./composer/ChatComposer";
 
 // ============================================================================
 // Image Constants
@@ -56,13 +57,22 @@ type SupportedImageType = (typeof SUPPORTED_IMAGE_TYPES)[number];
 /**
  * Hook for navigating through previous user messages with ArrowUp/ArrowDown.
  */
+// Shape shared between native HTMLTextAreaElement and our ComposerHandle.
+// Both expose `value`, `selectionStart`, and `selectionEnd`, so the
+// history hook is structurally typed against the minimum surface.
+type EditableLike = {
+	value: string;
+	selectionStart: number;
+	selectionEnd: number;
+};
+
 function useInputHistory(
 	messages: ChatMessage[],
 	onInputChange: (value: string) => void,
 ): {
 	handleHistoryKeyDown: (
-		e: React.KeyboardEvent,
-		textareaEl: HTMLTextAreaElement | null,
+		e: React.KeyboardEvent | KeyboardEvent,
+		textareaEl: EditableLike | null,
 	) => boolean;
 	resetHistory: () => void;
 } {
@@ -85,11 +95,15 @@ function useInputHistory(
 
 	const handleHistoryKeyDown = useCallback(
 		(
-			e: React.KeyboardEvent,
-			textareaEl: HTMLTextAreaElement | null,
+			e: React.KeyboardEvent | KeyboardEvent,
+			textareaEl: EditableLike | null,
 		): boolean => {
 			if (!textareaEl) return false;
-			if (e.nativeEvent.isComposing) return false;
+			const nativeIsComposing =
+				"nativeEvent" in e
+					? e.nativeEvent.isComposing
+					: (e as KeyboardEvent).isComposing;
+			if (nativeIsComposing) return false;
 			if (userMessages.length === 0) return false;
 
 			// Exit history mode if user edited text or moved cursor
@@ -319,7 +333,7 @@ export function InputArea({
 	);
 
 	// Refs
-	const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const textareaRef = useRef<ComposerHandle | null>(null);
 	const dragCounterRef = useRef(0);
 
 	// Clear attached files when agent changes
@@ -756,7 +770,7 @@ export function InputArea({
 	 * Handle dropdown keyboard navigation.
 	 */
 	const handleDropdownKeyPress = useCallback(
-		(e: React.KeyboardEvent): boolean => {
+		(e: React.KeyboardEvent | KeyboardEvent): boolean => {
 			const isSlashCommandActive = slashCommands.isOpen;
 			const isMentionActive = mentions.isOpen;
 
@@ -788,7 +802,11 @@ export function InputArea({
 			// Select item (Enter or Tab)
 			if (e.key === "Enter" || e.key === "Tab") {
 				// Skip Enter during IME composition (allow Tab to still work)
-				if (e.key === "Enter" && e.nativeEvent.isComposing) {
+				const isComposing =
+					"nativeEvent" in e
+						? e.nativeEvent.isComposing
+						: (e as KeyboardEvent).isComposing;
+				if (e.key === "Enter" && isComposing) {
 					return false;
 				}
 				e.preventDefault();
@@ -835,7 +853,7 @@ export function InputArea({
 	 * Handle keyboard events in the textarea.
 	 */
 	const handleKeyDown = useCallback(
-		(e: React.KeyboardEvent) => {
+		(e: React.KeyboardEvent | KeyboardEvent) => {
 			// Handle dropdown navigation first
 			if (handleDropdownKeyPress(e)) {
 				return;
@@ -846,12 +864,14 @@ export function InputArea({
 				return;
 			}
 
+			const isComposing =
+				"nativeEvent" in e
+					? e.nativeEvent.isComposing
+					: (e as KeyboardEvent).isComposing;
+
 			// Normal input handling - check if should send based on shortcut setting
 			const hasCmdCtrl = e.metaKey || e.ctrlKey;
-			if (
-				e.key === "Enter" &&
-				(!e.nativeEvent.isComposing || hasCmdCtrl)
-			) {
+			if (e.key === "Enter" && (!isComposing || hasCmdCtrl)) {
 				const shouldSend =
 					settings.sendMessageShortcut === "enter"
 						? !e.shiftKey // Enter mode: send unless Shift is pressed
@@ -880,10 +900,7 @@ export function InputArea({
 	 * Handle input changes in the textarea.
 	 */
 	const handleInputChange = useCallback(
-		(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-			const newValue = e.target.value;
-			const cursorPosition = e.target.selectionStart || 0;
-
+		(newValue: string, cursorPosition: number) => {
 			onInputChange(newValue);
 
 			// Hide hint overlay when user modifies the input
@@ -1044,18 +1061,24 @@ export function InputArea({
 					</div>
 				)}
 
-				{/* Textarea with Hint Overlay */}
+				{/* Composer with Hint Overlay */}
 				<div className="agent-client-textarea-wrapper">
-					<textarea
+					<ChatComposer
 						ref={textareaRef}
 						value={inputValue}
-						onChange={handleInputChange}
-						onKeyDown={handleKeyDown}
-						onPaste={(e) => void handlePaste(e)}
 						placeholder={placeholder}
 						className={`agent-client-chat-input-textarea ${autoMentionEnabled && mentions.activeNote ? "has-auto-mention" : ""}`}
-						rows={1}
 						spellCheck={obsidianSpellcheck}
+						plugin={plugin}
+						onChange={handleInputChange}
+						onKeyDown={handleKeyDown}
+						onPaste={(e) => {
+							// Native ClipboardEvent has the same surface as
+							// React.ClipboardEvent for the bits handlePaste reads.
+							void handlePaste(
+								e as unknown as React.ClipboardEvent,
+							);
+						}}
 					/>
 					{hintText && (
 						<div

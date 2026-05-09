@@ -1115,6 +1115,107 @@ If your plugin does not need CSS, delete this file.
 	min-height: 80px;
 }
 
+/* ===== CodeMirror 6 composer (replaces textarea) ===== */
+
+.agent-client-chat-input-composer.agent-client-chat-input-textarea {
+	display: block;
+	min-height: 80px;
+	max-height: 300px;
+	overflow-y: auto;
+	font-family: inherit;
+	font-size: var(--ac-chat-font-size);
+	line-height: var(--line-height-normal);
+	color: var(--text-normal);
+}
+
+.agent-client-chat-input-composer .cm-editor {
+	background-color: transparent;
+	height: 100%;
+}
+
+.agent-client-chat-input-composer .cm-editor.cm-focused {
+	outline: none;
+}
+
+.agent-client-chat-input-composer .cm-scroller {
+	font-family: inherit;
+	font-size: var(--ac-chat-font-size);
+	line-height: var(--line-height-normal);
+}
+
+.agent-client-chat-input-composer .cm-content {
+	padding: 12px;
+	caret-color: var(--text-normal);
+}
+
+.agent-client-chat-input-composer .cm-line {
+	padding: 0;
+}
+
+.agent-client-chat-input-composer .cm-placeholder {
+	color: var(--text-faint);
+}
+
+/* Mention pill widget — Cursor-style chip rendered in place of @[[name]] */
+.cm-mention-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 1px 8px 1px 6px;
+	margin: 0 1px;
+	border: 1px solid rgba(var(--interactive-accent-rgb, 138, 92, 245), 0.4);
+	border-radius: 999px;
+	background-color: rgba(
+		var(--interactive-accent-rgb, 138, 92, 245),
+		0.12
+	);
+	color: var(--text-normal);
+	font-size: 0.92em;
+	font-family: var(--font-interface);
+	line-height: 1.4;
+	cursor: pointer;
+	user-select: none;
+	vertical-align: baseline;
+	transition:
+		background-color 0.12s ease,
+		border-color 0.12s ease;
+}
+
+.cm-mention-pill:hover {
+	background-color: rgba(
+		var(--interactive-accent-rgb, 138, 92, 245),
+		0.2
+	);
+	border-color: rgba(var(--interactive-accent-rgb, 138, 92, 245), 0.6);
+}
+
+.cm-mention-pill-icon {
+	display: inline-flex;
+	align-items: center;
+	color: var(--interactive-accent);
+}
+
+.cm-mention-pill-icon svg {
+	width: 12px;
+	height: 12px;
+}
+
+.cm-mention-pill-label {
+	font-weight: 500;
+}
+
+/* Slash command syntax token */
+.cm-slash-token {
+	color: var(--interactive-accent);
+	font-weight: 600;
+	background-color: rgba(
+		var(--interactive-accent-rgb, 138, 92, 245),
+		0.1
+	);
+	border-radius: 3px;
+	padding: 0 3px;
+}
+
 /* Hint overlay for slash commands */
 .agent-client-hint-overlay {
 	/* Positioning - exact overlay on textarea */
