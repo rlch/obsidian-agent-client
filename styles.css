@@ -517,72 +517,156 @@ If your plugin does not need CSS, delete this file.
 	height: 12px;
 }
 
-/* ===== Permission Request Buttons ===== */
+/* ===== Permission Card ===== */
+
+.agent-client-permission-card {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 8px 10px;
+	margin-top: 8px;
+	border-radius: 6px;
+	background-color: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+}
+
+.agent-client-permission-card.agent-client-permission-active {
+	border-color: rgba(var(--color-yellow-rgb), 0.5);
+	background-color: rgba(var(--color-yellow-rgb), 0.06);
+}
+
+.agent-client-permission-card-label {
+	font-size: 0.85em;
+	font-weight: 600;
+	color: var(--text-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.agent-client-permission-card-options {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
 .agent-client-permission-option {
-	padding: 8px 16px !important;
-	border: 1px solid var(--background-modifier-border) !important;
-	border-radius: 6px !important;
-	background-color: var(--background-primary) !important;
-	color: var(--text-normal) !important;
+	padding: 6px 12px;
+	border-radius: 4px;
+	background-color: var(--background-primary);
+	color: var(--text-normal);
+	border: 1px solid var(--background-modifier-border);
 	cursor: pointer;
-	font-size: 13px;
+	font-size: 0.92em;
 	font-weight: 500;
-	transition: all 0.2s ease;
 	min-width: 80px;
 	text-align: center;
-	opacity: 1;
+	transition:
+		background-color 0.12s ease,
+		border-color 0.12s ease,
+		color 0.12s ease;
 }
 
-.agent-client-permission-option.agent-client-selected {
-	background-color: var(--interactive-accent) !important;
-	color: white !important;
-	font-weight: 600;
+.agent-client-permission-option:hover {
+	background-color: var(--background-modifier-hover);
 }
 
-.agent-client-permission-option.agent-client-disabled {
-	background-color: var(--background-modifier-border) !important;
-	color: var(--text-muted) !important;
-	cursor: not-allowed !important;
+.agent-client-permission-option:focus-visible {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 1px;
 }
 
-.agent-client-permission-option.agent-client-disabled:not(
-		.agent-client-selected
-	) {
-	opacity: 0.5;
+/* allow_once: tinted green */
+.agent-client-permission-option.agent-client-permission-kind-allow_once {
+	background-color: rgba(var(--color-green-rgb), 0.12);
+	color: var(--color-green);
+	border-color: rgba(var(--color-green-rgb), 0.4);
 }
 
-/* Special kinds */
-.agent-client-permission-option.agent-client-permission-kind-allow_always:not(
-		.agent-client-selected
-	):not(.agent-client-disabled) {
-	background-color: var(--color-green) !important;
-	color: white !important;
-	border-color: var(--color-green) !important;
+.agent-client-permission-option.agent-client-permission-kind-allow_once:hover {
+	background-color: rgba(var(--color-green-rgb), 0.2);
 }
 
-.agent-client-permission-option.agent-client-permission-kind-reject_once:not(
-		.agent-client-selected
-	):not(.agent-client-disabled) {
-	background-color: var(--color-red) !important;
-	color: white !important;
-	border-color: var(--color-red) !important;
+/* allow_always: solid green (stronger tone) */
+.agent-client-permission-option.agent-client-permission-kind-allow_always {
+	background-color: var(--color-green);
+	color: var(--text-on-accent, #fff);
+	border-color: var(--color-green);
 }
 
-.agent-client-permission-option.agent-client-permission-kind-allow_once:not(
-		.agent-client-selected
-	):not(.agent-client-disabled) {
-	background-color: var(--color-orange) !important;
-	color: white !important;
-	border-color: var(--color-orange) !important;
+.agent-client-permission-option.agent-client-permission-kind-allow_always:hover {
+	filter: brightness(1.05);
 }
 
-/* Normal option button hover (no kind specified) */
-.agent-client-permission-option:not(
-		.agent-client-permission-kind-allow_always
-	):not(.agent-client-permission-kind-reject_once):not(
-		.agent-client-permission-kind-allow_once
-	):not(.agent-client-disabled):not(.agent-client-selected):hover {
-	background-color: var(--background-modifier-hover) !important;
+/* reject_once: tinted red */
+.agent-client-permission-option.agent-client-permission-kind-reject_once {
+	background-color: rgba(var(--color-red-rgb), 0.12);
+	color: var(--color-red);
+	border-color: rgba(var(--color-red-rgb), 0.4);
+}
+
+.agent-client-permission-option.agent-client-permission-kind-reject_once:hover {
+	background-color: rgba(var(--color-red-rgb), 0.2);
+}
+
+/* reject_always: solid red (stronger tone) */
+.agent-client-permission-option.agent-client-permission-kind-reject_always {
+	background-color: var(--color-red);
+	color: var(--text-on-accent, #fff);
+	border-color: var(--color-red);
+}
+
+.agent-client-permission-option.agent-client-permission-kind-reject_always:hover {
+	filter: brightness(1.05);
+}
+
+/* Chosen-state chip (after selection) */
+.agent-client-permission-chosen {
+	flex-direction: row;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.9em;
+	color: var(--text-muted);
+}
+
+.agent-client-permission-chosen svg {
+	width: 14px;
+	height: 14px;
+}
+
+.agent-client-permission-chosen-allow_once,
+.agent-client-permission-chosen-allow_always {
+	border-color: rgba(var(--color-green-rgb), 0.4);
+}
+
+.agent-client-permission-chosen-allow_once svg,
+.agent-client-permission-chosen-allow_always svg {
+	color: var(--color-green);
+}
+
+.agent-client-permission-chosen-reject_once,
+.agent-client-permission-chosen-reject_always {
+	border-color: rgba(var(--color-red-rgb), 0.4);
+}
+
+.agent-client-permission-chosen-reject_once svg,
+.agent-client-permission-chosen-reject_always svg {
+	color: var(--color-red);
+}
+
+/* Cancelled-state chip */
+.agent-client-permission-cancelled {
+	flex-direction: row;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.9em;
+	color: var(--text-muted);
+	border-color: var(--background-modifier-border);
+}
+
+.agent-client-permission-cancelled svg {
+	width: 14px;
+	height: 14px;
+	color: var(--text-muted);
 }
 
 /* ===== Chat View Components ===== */
