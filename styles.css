@@ -1211,22 +1211,31 @@ If your plugin does not need CSS, delete this file.
 }
 
 /*
- * Placeholder must NOT wrap — when it wraps, the cm-line that contains it
- * measures multi-line tall, and CM6 sizes the caret to match the line. So
- * a long placeholder string would stretch the cursor to 2+ line-heights.
- * Truncate with ellipsis instead.
+ * Placeholder is absolutely positioned so it can wrap freely without
+ * stretching the cm-line that contains it. CM6's default has it as
+ * display: inline-block in flow, which makes the line measure to the
+ * placeholder's wrapped height — and the caret follows the line height,
+ * so a 2-line placeholder produced a 2-line caret.
+ *
+ * Absolute positioning takes the placeholder out of flow: cm-line stays
+ * single-line tall, caret stays single-line tall, placeholder text still
+ * wraps naturally because it's just a regular block in its own context.
  */
+.agent-client-chat-input-composer .cm-line {
+	position: relative;
+}
+
 .agent-client-chat-input-composer .cm-placeholder {
+	position: absolute !important;
+	top: 0;
+	left: 0;
+	right: 0;
 	color: var(--text-faint);
 	font-family: var(--font-interface) !important;
 	font-size: 13px !important;
 	line-height: 20px !important;
-	white-space: nowrap !important;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	max-width: 100%;
-	display: inline-block;
-	vertical-align: top;
+	pointer-events: none;
+	white-space: normal;
 }
 
 /*
