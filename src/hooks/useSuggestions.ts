@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
+import { prepareFuzzySearch } from "obsidian";
 import type { NoteMetadata, IVaultAccess } from "../services/vault-service";
 import {
 	detectMention,
@@ -234,12 +235,33 @@ export function useSuggestions(
 				return;
 			}
 
-			const query = afterSlash.toLowerCase();
+			const query = afterSlash;
 
-			// Filter available commands
-			const filtered = availableCommands.filter((cmd) =>
-				cmd.name.toLowerCase().includes(query),
-			);
+			// Empty query → show all commands as-typed (the user just hit "/").
+			let filtered: SlashCommand[];
+			if (query.length === 0) {
+				filtered = availableCommands;
+			} else {
+				// Fuzzy match against command name + description, sorted by
+				// best score across both fields. Matches Obsidian's own
+				// command-palette behaviour and the @-mention fuzzy path.
+				const fuzzy = prepareFuzzySearch(query);
+				type Scored = { cmd: SlashCommand; score: number };
+				const scored: Scored[] = [];
+				for (const cmd of availableCommands) {
+					let best = -Infinity;
+					for (const field of [
+						cmd.name,
+						cmd.description ?? "",
+					]) {
+						const m = fuzzy(field);
+						if (m && m.score > best) best = m.score;
+					}
+					if (best > -Infinity) scored.push({ cmd, score: best });
+				}
+				scored.sort((a, b) => b.score - a.score);
+				filtered = scored.map((s) => s.cmd);
+			}
 
 			setCommandSuggestions(filtered);
 			setCommandSelectedIndex(0);
