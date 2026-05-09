@@ -976,19 +976,23 @@ If your plugin does not need CSS, delete this file.
 	position: relative;
 }
 
-/* Input box - outer container with border and background */
+/* Input box — shadcn-style unified field: rounded outer, composer + toolbar
+   stacked, focus ring on the WHOLE box. */
 .agent-client-chat-input-box {
 	display: flex;
 	flex-direction: column;
 	border: 1px solid var(--background-modifier-border);
-	border-radius: 8px;
+	border-radius: var(--radius-l);
 	background-color: var(--background-primary);
 	overflow: hidden;
-	transition: box-shadow 0.15s ease;
+	transition:
+		border-color 0.12s ease,
+		box-shadow 0.12s ease;
 }
 
 .agent-client-chat-input-box:focus-within {
-	box-shadow: 0 0 0 1.5px var(--background-modifier-border);
+	border-color: var(--background-modifier-border-hover);
+	box-shadow: 0 0 0 2px rgba(var(--interactive-accent-rgb), 0.15);
 }
 
 .agent-client-chat-input-box.agent-client-dragging-over {
@@ -1067,12 +1071,12 @@ If your plugin does not need CSS, delete this file.
 
 .agent-client-chat-input-textarea {
 	width: 100%;
-	padding: 12px;
+	padding: 10px var(--size-4-3);
 	border: none;
 	background-color: transparent;
 	color: var(--text-normal);
 	resize: none;
-	min-height: 80px;
+	min-height: 36px;
 	max-height: 300px;
 	font-family: inherit;
 	font-size: var(--ac-chat-font-size);
@@ -1108,11 +1112,12 @@ If your plugin does not need CSS, delete this file.
 	height: var(--textarea-height, auto);
 }
 
-/* Textarea wrapper for hint overlay */
+/* Textarea wrapper for hint overlay — composer self-sizes via its own
+ * min-height (36px), wrapper just hosts the hint overlay. */
 .agent-client-textarea-wrapper {
 	position: relative;
 	flex: 1;
-	min-height: 80px;
+	min-height: 0;
 }
 
 /* ===== CodeMirror 6 composer (replaces textarea) ===== */
@@ -1166,12 +1171,12 @@ If your plugin does not need CSS, delete this file.
 }
 
 .agent-client-chat-input-composer .cm-content {
-	padding: 8px 12px;
+	padding: 8px var(--size-4-3);
 	caret-color: var(--text-normal);
 	font-family: inherit;
 	font-size: inherit;
 	line-height: inherit;
-	min-height: inherit;
+	min-height: 20px;
 }
 
 .agent-client-chat-input-composer .cm-line {
@@ -1289,14 +1294,14 @@ If your plugin does not need CSS, delete this file.
 	color: var(--text-faint);
 }
 
-/* Input Actions Container */
+/* Input Actions Container — toolbar row inside the unified box */
 .agent-client-chat-input-actions {
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
 	flex-wrap: nowrap;
-	gap: 8px;
-	padding: 4px 12px 8px 12px;
+	gap: var(--size-4-2);
+	padding: 4px var(--size-4-3) 6px var(--size-4-3);
 	min-width: 0;
 }
 
