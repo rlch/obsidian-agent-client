@@ -119,35 +119,11 @@ If your plugin does not need CSS, delete this file.
 }
 
 .agent-client-loading-dot:nth-child(2) {
-	animation-delay: 0.15s;
+	animation-delay: 0.2s;
 }
 
 .agent-client-loading-dot:nth-child(3) {
-	animation-delay: 0.3s;
-}
-
-.agent-client-loading-dot:nth-child(4) {
-	animation-delay: 0.9s;
-}
-
-.agent-client-loading-dot:nth-child(5) {
-	animation-delay: 0s;
-}
-
-.agent-client-loading-dot:nth-child(6) {
-	animation-delay: 0.15s;
-}
-
-.agent-client-loading-dot:nth-child(7) {
-	animation-delay: 0.6s;
-}
-
-.agent-client-loading-dot:nth-child(8) {
-	animation-delay: 0.45s;
-}
-
-.agent-client-loading-dot:nth-child(9) {
-	animation-delay: 0.3s;
+	animation-delay: 0.4s;
 }
 
 @keyframes dotPulse {
@@ -941,9 +917,56 @@ If your plugin does not need CSS, delete this file.
 
 /* Empty state */
 .agent-client-chat-empty-state {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
 	color: var(--text-muted);
 	text-align: center;
-	margin-top: 20px;
+	margin-top: 32px;
+	padding: 0 16px;
+}
+
+.agent-client-chat-empty-state-agent {
+	font-size: 0.95em;
+	font-weight: 600;
+	color: var(--text-normal);
+	letter-spacing: 0.02em;
+}
+
+.agent-client-chat-empty-state-status {
+	font-size: 0.9em;
+	color: var(--text-muted);
+}
+
+.agent-client-chat-empty-state-hints {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	font-size: 0.85em;
+	color: var(--text-muted);
+}
+
+.agent-client-chat-empty-state-hint {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.agent-client-kbd {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 18px;
+	padding: 1px 6px;
+	border: 1px solid var(--background-modifier-border);
+	border-bottom-width: 2px;
+	border-radius: 4px;
+	background-color: var(--background-secondary);
+	color: var(--text-normal);
+	font-family: var(--font-monospace);
+	font-size: 0.85em;
+	line-height: 1.4;
 }
 
 /* Input area */
@@ -1669,11 +1692,11 @@ If your plugin does not need CSS, delete this file.
 }
 
 .agent-client-diff-line-added {
-	background-color: rgba(46, 160, 67, 0.15);
+	background-color: rgba(var(--color-green-rgb), 0.15);
 }
 
 .agent-client-diff-line-removed {
-	background-color: rgba(248, 81, 73, 0.15);
+	background-color: rgba(var(--color-red-rgb), 0.15);
 }
 
 .agent-client-diff-line-context {
@@ -1697,12 +1720,12 @@ If your plugin does not need CSS, delete this file.
 
 /* Word-level diff highlighting */
 .agent-client-diff-word-added {
-	background-color: rgba(46, 160, 67, 0.4);
+	background-color: rgba(var(--color-green-rgb), 0.35);
 	font-weight: 600;
 }
 
 .agent-client-diff-word-removed {
-	background-color: rgba(248, 81, 73, 0.4);
+	background-color: rgba(var(--color-red-rgb), 0.35);
 	font-weight: 600;
 	text-decoration: line-through;
 }

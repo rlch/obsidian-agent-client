@@ -171,14 +171,35 @@ export function MessageList({
 
 	// Empty state
 	if (messages.length === 0) {
+		const status = isRestoringSession
+			? "Restoring session..."
+			: !isSessionReady
+				? `Connecting to ${agentLabel}...`
+				: null;
 		return (
 			<div ref={containerRef} className="agent-client-chat-view-messages">
 				<div className="agent-client-chat-empty-state">
-					{isRestoringSession
-						? "Restoring session..."
-						: !isSessionReady
-							? `Connecting to ${agentLabel}...`
-							: `Start a conversation with ${agentLabel}...`}
+					<div className="agent-client-chat-empty-state-agent">
+						{agentLabel}
+					</div>
+					{status ? (
+						<div className="agent-client-chat-empty-state-status">
+							{status}
+						</div>
+					) : (
+						<div className="agent-client-chat-empty-state-hints">
+							<div className="agent-client-chat-empty-state-hint">
+								Type{" "}
+								<kbd className="agent-client-kbd">@</kbd> to
+								mention a note
+							</div>
+							<div className="agent-client-chat-empty-state-hint">
+								Type{" "}
+								<kbd className="agent-client-kbd">/</kbd> to
+								see commands
+							</div>
+						</div>
+					)}
 				</div>
 			</div>
 		);
@@ -234,12 +255,6 @@ export function MessageList({
 				className={`agent-client-loading-indicator ${!isSending ? "agent-client-hidden" : ""}`}
 			>
 				<div className="agent-client-loading-dots">
-					<div className="agent-client-loading-dot"></div>
-					<div className="agent-client-loading-dot"></div>
-					<div className="agent-client-loading-dot"></div>
-					<div className="agent-client-loading-dot"></div>
-					<div className="agent-client-loading-dot"></div>
-					<div className="agent-client-loading-dot"></div>
 					<div className="agent-client-loading-dot"></div>
 					<div className="agent-client-loading-dot"></div>
 					<div className="agent-client-loading-dot"></div>

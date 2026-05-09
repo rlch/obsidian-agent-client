@@ -212,3 +212,20 @@ Diff colours, status pills, and badge backgrounds derive from Obsidian theme var
 - Streamdown's bundle cost is acceptable; if it isn't, `markdown-to-jsx` is the fallback.
 - `@radix-ui/react-collapsible` is the only Radix primitive we add. If more are needed (Popover, Dialog), they're added one at a time and recorded as a spec amendment.
 - Obsidian's bundled CM6 version is exposed at runtime via `EditorView` from the Obsidian module; we use that surface and do not vendor a separate CM6 build.
+
+## Amendments
+
+### 2026-05-09 — Composer rewrite (US 5) deferred
+
+The CodeMirror 6 swap (FR-040..FR-046) is deferred to a follow-up spec.
+Reason: `InputArea.tsx` has 28 textarea-coupled touchpoints spread across
+cursor-position math for mention insertion, scrollHeight-based auto-height,
+focus management on history navigation, and `selectionStart`-anchored
+suggestion popup positioning. A safe swap requires re-implementing each
+through CM6's `EditorView` API, with parity testing for IME, drag-drop,
+paste, and undo. That is substantively a separate feature — out of scope
+for the same landing as the chrome rebuild.
+
+The existing textarea continues to back the composer. Mention pills and
+slash-command highlighting (the user-visible motivation for the swap)
+are tracked under a future `002-cm6-composer` spec.
