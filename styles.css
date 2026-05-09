@@ -1118,14 +1118,35 @@ If your plugin does not need CSS, delete this file.
 /* ===== CodeMirror 6 composer (replaces textarea) ===== */
 
 /*
- * The composer reuses .agent-client-chat-input-textarea for sizing/font/
- * scroll behaviour (so the existing auto-height routine and font-size
- * settings keep working). Drop the wrapper padding — CM6 owns it via
- * cm-content — and disable the default contenteditable focus outline.
+ * Composer sizing/font is set explicitly here rather than inherited from
+ * .agent-client-chat-input-textarea — that rule was tuned for a plain
+ * <textarea> and the inherited tokens (note-text font size,
+ * --line-height-normal: 1.5, 80px min-height) are too tall for a CM6
+ * editor where the caret tracks line-height directly.
+ *
+ * Targets: Obsidian UI font, ~36px collapsed (single line), padding
+ * lives on cm-content so the wrapper's classList/style/scrollHeight
+ * still drive the auto-height routine.
  */
 .agent-client-chat-input-composer.agent-client-chat-input-textarea {
 	padding: 0;
 	display: block;
+	min-height: 36px;
+	max-height: 300px;
+	overflow-y: auto;
+	font-family: var(--font-interface);
+	font-size: var(--font-ui-medium);
+	line-height: 1.5;
+}
+
+/*
+ * The auto-height JS in InputArea was designed for a <textarea> which
+ * doesn't grow on its own. CM6 grows cm-content naturally; the wrapper
+ * just needs min/max-height + overflow-y. Neutralize the JS-driven
+ * --textarea-height so it doesn't fight the natural sizing.
+ */
+.agent-client-chat-input-composer.agent-client-textarea-expanded {
+	height: auto;
 }
 
 .agent-client-chat-input-composer .cm-editor {
@@ -1145,35 +1166,53 @@ If your plugin does not need CSS, delete this file.
 }
 
 .agent-client-chat-input-composer .cm-content {
-	padding: 12px;
+	padding: 8px 12px;
 	caret-color: var(--text-normal);
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
 	min-height: inherit;
 }
 
 .agent-client-chat-input-composer .cm-line {
 	padding: 0;
+	line-height: inherit;
+}
+
+.agent-client-chat-input-composer .cm-cursor,
+.agent-client-chat-input-composer .cm-cursor-primary {
+	border-left-color: var(--text-normal);
 }
 
 .agent-client-chat-input-composer .cm-placeholder {
 	color: var(--text-faint);
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
 }
 
-/* Mention pill widget — Cursor-style chip rendered in place of @[[name]] */
+/*
+ * Mention chip — shadcn Badge-style (rounded-md, dense padding, code-token
+ * weight). Squared corners over pill so chips don't look like balloons in
+ * a code-adjacent UI. Visual reference: cline/components/ui/badge.tsx
+ * variants `default` + `icon` (rounded px-1.5 py-0.5 gap-1 [&_svg]:size-2).
+ */
 .cm-mention-pill {
 	display: inline-flex;
 	align-items: center;
-	gap: 4px;
-	padding: 1px 8px 1px 6px;
+	gap: 3px;
+	padding: 1px 5px;
 	margin: 0 1px;
-	border: 1px solid rgba(var(--interactive-accent-rgb, 138, 92, 245), 0.4);
-	border-radius: 999px;
+	border: 1px solid rgba(var(--interactive-accent-rgb, 138, 92, 245), 0.25);
+	border-radius: 4px;
 	background-color: rgba(
 		var(--interactive-accent-rgb, 138, 92, 245),
-		0.12
+		0.08
 	);
 	color: var(--text-normal);
-	font-size: 0.92em;
+	font-size: 0.88em;
 	font-family: var(--font-interface);
+	font-weight: 500;
 	line-height: 1.4;
 	cursor: pointer;
 	user-select: none;
@@ -1186,33 +1225,36 @@ If your plugin does not need CSS, delete this file.
 .cm-mention-pill:hover {
 	background-color: rgba(
 		var(--interactive-accent-rgb, 138, 92, 245),
-		0.2
+		0.16
 	);
-	border-color: rgba(var(--interactive-accent-rgb, 138, 92, 245), 0.6);
+	border-color: rgba(var(--interactive-accent-rgb, 138, 92, 245), 0.45);
 }
 
 .cm-mention-pill-icon {
 	display: inline-flex;
 	align-items: center;
 	color: var(--interactive-accent);
+	margin-right: 1px;
 }
 
 .cm-mention-pill-icon svg {
-	width: 12px;
-	height: 12px;
+	width: 10px;
+	height: 10px;
 }
 
 .cm-mention-pill-label {
 	font-weight: 500;
 }
 
-/* Slash command syntax token */
+/* Slash command — code-token style: monospace, tinted bg, small radius */
 .cm-slash-token {
 	color: var(--interactive-accent);
+	font-family: var(--font-monospace);
 	font-weight: 600;
+	font-size: 0.92em;
 	background-color: rgba(
 		var(--interactive-accent-rgb, 138, 92, 245),
-		0.1
+		0.08
 	);
 	border-radius: 3px;
 	padding: 0 3px;
