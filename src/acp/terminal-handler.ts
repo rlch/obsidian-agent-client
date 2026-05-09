@@ -36,8 +36,17 @@ interface TerminalProcess {
 	cleanupTimeout?: number;
 }
 
+export interface TerminalListener {
+	onChunk?: (data: string, isInitial: boolean) => void;
+	onExit?: (exitStatus: {
+		exitCode: number | null;
+		signal: string | null;
+	}) => void;
+}
+
 export class TerminalManager {
 	private terminals = new Map<string, TerminalProcess>();
+	private subscribers = new Map<string, Set<TerminalListener>>();
 	private logger: Logger;
 	private plugin: AgentClientPlugin;
 
@@ -130,6 +139,7 @@ export class TerminalManager {
 			// Resolve all waiting promises
 			terminal.waitPromises.forEach((resolve) => resolve(exitStatus));
 			terminal.waitPromises = [];
+			this.notifyExit(terminalId, exitStatus);
 		});
 
 		// Capture stdout and stderr
@@ -155,6 +165,7 @@ export class TerminalManager {
 			// Resolve all waiting promises
 			terminal.waitPromises.forEach((resolve) => resolve(exitStatus));
 			terminal.waitPromises = [];
+			this.notifyExit(terminalId, exitStatus);
 		});
 
 		this.terminals.set(terminalId, terminal);
@@ -177,6 +188,89 @@ export class TerminalManager {
 			);
 			terminal.output = truncatedBytes.toString("utf8");
 		}
+
+		this.notifyChunk(terminal.id, data);
+	}
+
+	private notifyChunk(terminalId: string, data: string): void {
+		const listeners = this.subscribers.get(terminalId);
+		if (!listeners) return;
+		for (const l of listeners) {
+			try {
+				l.onChunk?.(data, false);
+			} catch (e) {
+				this.logger.error(
+					`[Terminal ${terminalId}] subscriber onChunk threw`,
+					e,
+				);
+			}
+		}
+	}
+
+	private notifyExit(
+		terminalId: string,
+		exitStatus: { exitCode: number | null; signal: string | null },
+	): void {
+		const listeners = this.subscribers.get(terminalId);
+		if (!listeners) return;
+		for (const l of listeners) {
+			try {
+				l.onExit?.(exitStatus);
+			} catch (e) {
+				this.logger.error(
+					`[Terminal ${terminalId}] subscriber onExit threw`,
+					e,
+				);
+			}
+		}
+	}
+
+	/**
+	 * Subscribe to a terminal's incremental output and exit status. Replaces
+	 * the polling-based getOutput pattern. The returned function unsubscribes.
+	 *
+	 * On subscription, if the terminal already has buffered output it is
+	 * delivered as a single initial chunk (isInitial=true). If the terminal
+	 * has already exited, onExit fires synchronously after that.
+	 */
+	subscribe(terminalId: string, listener: TerminalListener): () => void {
+		let listeners = this.subscribers.get(terminalId);
+		if (!listeners) {
+			listeners = new Set();
+			this.subscribers.set(terminalId, listeners);
+		}
+		listeners.add(listener);
+
+		const terminal = this.terminals.get(terminalId);
+		if (terminal) {
+			if (terminal.output) {
+				try {
+					listener.onChunk?.(terminal.output, true);
+				} catch (e) {
+					this.logger.error(
+						`[Terminal ${terminalId}] subscriber initial onChunk threw`,
+						e,
+					);
+				}
+			}
+			if (terminal.exitStatus) {
+				try {
+					listener.onExit?.(terminal.exitStatus);
+				} catch (e) {
+					this.logger.error(
+						`[Terminal ${terminalId}] subscriber initial onExit threw`,
+						e,
+					);
+				}
+			}
+		}
+
+		return () => {
+			const set = this.subscribers.get(terminalId);
+			if (!set) return;
+			set.delete(listener);
+			if (set.size === 0) this.subscribers.delete(terminalId);
+		};
 	}
 
 	getOutput(terminalId: string): {
@@ -235,12 +329,13 @@ export class TerminalManager {
 			terminal.process.kill("SIGTERM");
 		}
 
-		// Schedule cleanup after 30 seconds to allow UI to poll final output
+		// Schedule cleanup after 30 seconds to allow late subscribers to seed
 		terminal.cleanupTimeout = window.setTimeout(() => {
 			this.logger.log(
 				`[Terminal ${terminalId}] Cleaning up terminal after grace period`,
 			);
 			this.terminals.delete(terminalId);
+			this.subscribers.delete(terminalId);
 		}, 30000);
 
 		return true;
@@ -260,5 +355,6 @@ export class TerminalManager {
 		});
 		// Clear all terminals
 		this.terminals.clear();
+		this.subscribers.clear();
 	}
 }

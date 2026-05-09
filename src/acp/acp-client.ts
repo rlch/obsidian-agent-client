@@ -12,7 +12,7 @@ import type {
 import type { PromptContent } from "../types/chat";
 import type { ProcessError } from "../types/errors";
 import { AcpTypeConverter } from "./type-converter";
-import { TerminalManager } from "./terminal-handler";
+import { TerminalManager, type TerminalListener } from "./terminal-handler";
 import { PermissionManager } from "./permission-handler";
 import { AcpHandler } from "./acp-handler";
 import { getLogger, Logger } from "../utils/logger";
@@ -753,6 +753,17 @@ export class AcpClient {
 			throw new Error(`Terminal ${terminalId} not found`);
 		}
 		return Promise.resolve(result);
+	}
+
+	/**
+	 * Subscribe to a terminal's incremental output and exit status.
+	 * Replaces polling. Returns an unsubscribe function.
+	 */
+	subscribeTerminal(
+		terminalId: string,
+		listener: TerminalListener,
+	): () => void {
+		return this.terminalManager.subscribe(terminalId, listener);
 	}
 
 	// ========================================================================
