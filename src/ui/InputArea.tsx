@@ -778,8 +778,15 @@ export function InputArea({
 				return false;
 			}
 
-			// Arrow navigation
-			if (e.key === "ArrowDown") {
+			// Arrow navigation + emacs-style Ctrl+N / Ctrl+P aliases.
+			const isDown =
+				e.key === "ArrowDown" ||
+				(e.ctrlKey && (e.key === "n" || e.key === "N"));
+			const isUp =
+				e.key === "ArrowUp" ||
+				(e.ctrlKey && (e.key === "p" || e.key === "P"));
+
+			if (isDown) {
 				e.preventDefault();
 				if (isSlashCommandActive) {
 					slashCommands.navigate("down");
@@ -789,7 +796,7 @@ export function InputArea({
 				return true;
 			}
 
-			if (e.key === "ArrowUp") {
+			if (isUp) {
 				e.preventDefault();
 				if (isSlashCommandActive) {
 					slashCommands.navigate("up");

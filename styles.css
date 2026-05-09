@@ -1659,41 +1659,56 @@ If your plugin does not need CSS, delete this file.
 	right: 8px;
 	max-height: 250px;
 	background-color: var(--background-secondary);
-	border: 2px solid var(--background-modifier-border);
-	border-radius: 8px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
 	overflow-y: auto;
-	font-size: 14px;
-	margin-bottom: 8px;
+	margin-bottom: 6px;
 	z-index: 1000;
+	padding: 4px;
 }
 
 .agent-client-mention-dropdown-item {
-	padding: 4px 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	padding: 5px 8px;
 	cursor: pointer;
+	border-radius: var(--radius-s);
 	background-color: transparent;
 	user-select: none;
-	transition: background-color 0.1s ease;
+	transition: background-color 0.08s ease;
 }
 
 .agent-client-mention-dropdown-item.agent-client-selected {
 	background-color: var(--background-modifier-hover);
 }
 
+/* Drop the per-item border — the selected highlight is the visual divider. */
 .agent-client-mention-dropdown-item.agent-client-has-border {
-	border-bottom: 1px solid var(--background-modifier-border);
+	border-bottom: none;
 }
 
 .agent-client-mention-dropdown-item-name {
-	font-weight: 500;
+	font-weight: var(--font-medium);
+	font-size: 13px;
+	line-height: 18px;
 	color: var(--text-normal);
-	margin-bottom: 2px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
+/* Single-line truncated description — was wrapping into a 12-line wall of
+ * text for skills with long blurbs (e.g. /dotfiles). */
 .agent-client-mention-dropdown-item-path {
-	font-size: 12px;
+	font-size: 11px;
+	line-height: 14px;
 	color: var(--text-muted);
-	opacity: 0.8;
+	opacity: 0.85;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 /* Terminal Renderer (xterm.js host) */
