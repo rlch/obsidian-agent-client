@@ -1117,15 +1117,15 @@ If your plugin does not need CSS, delete this file.
 
 /* ===== CodeMirror 6 composer (replaces textarea) ===== */
 
+/*
+ * The composer reuses .agent-client-chat-input-textarea for sizing/font/
+ * scroll behaviour (so the existing auto-height routine and font-size
+ * settings keep working). Drop the wrapper padding — CM6 owns it via
+ * cm-content — and disable the default contenteditable focus outline.
+ */
 .agent-client-chat-input-composer.agent-client-chat-input-textarea {
+	padding: 0;
 	display: block;
-	min-height: 80px;
-	max-height: 300px;
-	overflow-y: auto;
-	font-family: inherit;
-	font-size: var(--ac-chat-font-size);
-	line-height: var(--line-height-normal);
-	color: var(--text-normal);
 }
 
 .agent-client-chat-input-composer .cm-editor {
@@ -1139,13 +1139,15 @@ If your plugin does not need CSS, delete this file.
 
 .agent-client-chat-input-composer .cm-scroller {
 	font-family: inherit;
-	font-size: var(--ac-chat-font-size);
-	line-height: var(--line-height-normal);
+	font-size: inherit;
+	line-height: inherit;
+	overflow: visible;
 }
 
 .agent-client-chat-input-composer .cm-content {
 	padding: 12px;
 	caret-color: var(--text-normal);
+	min-height: inherit;
 }
 
 .agent-client-chat-input-composer .cm-line {

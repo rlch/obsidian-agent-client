@@ -164,13 +164,20 @@ export const ChatComposer = forwardRef<ComposerHandle, ChatComposerProps>(
 						return view?.state.selection.main.from ?? 0;
 					},
 					set selectionStart(pos: number) {
+						// All current callers set both selectionStart and
+						// selectionEnd to the same value to place a caret —
+						// there's no place that maintains a non-empty
+						// selection by setting only one side. Treat both
+						// setters as caret placement; if a future caller
+						// needs anchor/head separation it can dispatch the
+						// transaction directly via a new handle method.
 						const view = viewRef.current;
 						if (!view) return;
-						const head = view.state.selection.main.head;
-						const anchor = Math.max(0, Math.min(pos, view.state.doc.length));
-						view.dispatch({
-							selection: { anchor, head: anchor === pos ? anchor : head },
-						});
+						const clamped = Math.max(
+							0,
+							Math.min(pos, view.state.doc.length),
+						);
+						view.dispatch({ selection: { anchor: clamped } });
 					},
 					get selectionEnd(): number {
 						const view = viewRef.current;
@@ -179,12 +186,21 @@ export const ChatComposer = forwardRef<ComposerHandle, ChatComposerProps>(
 					set selectionEnd(pos: number) {
 						const view = viewRef.current;
 						if (!view) return;
-						const anchor = view.state.selection.main.anchor;
-						const head = Math.max(0, Math.min(pos, view.state.doc.length));
-						view.dispatch({ selection: { anchor, head } });
+						const clamped = Math.max(
+							0,
+							Math.min(pos, view.state.doc.length),
+						);
+						view.dispatch({ selection: { anchor: clamped } });
 					},
 					get scrollHeight(): number {
-						return viewRef.current?.contentDOM.scrollHeight ?? 0;
+						// The auto-height routine in InputArea reads this
+						// after toggling `height: auto` on the same element
+						// (the wrapper, since classList/style flow there).
+						// CM6's cm-scroller stretches to fit cm-content under
+						// height:auto, so the wrapper's scrollHeight reflects
+						// the natural content height the same way a textarea
+						// does — that's what the caller wants here.
+						return wrapperRef.current?.scrollHeight ?? 0;
 					},
 					focus() {
 						viewRef.current?.focus();
