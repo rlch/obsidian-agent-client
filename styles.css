@@ -295,12 +295,12 @@ If your plugin does not need CSS, delete this file.
 /* ===== Tool Call Card (Zed-style: header + collapsible body) ===== */
 
 .agent-client-tool-card {
-	margin: 6px 0;
-	padding: 8px 10px;
+	margin: var(--size-2-3) 0;
+	padding: var(--size-4-2) var(--size-4-3);
 	background-color: var(--background-primary-alt, transparent);
 	border: 1px solid var(--background-modifier-border);
-	border-radius: 6px;
-	font-size: 0.92em;
+	border-radius: var(--radius-m);
+	font-size: var(--font-ui-medium);
 	user-select: text;
 	overflow: hidden;
 }
@@ -342,7 +342,7 @@ If your plugin does not need CSS, delete this file.
 
 .agent-client-tool-card-verb {
 	flex-shrink: 0;
-	font-weight: 600;
+	font-weight: var(--font-semibold);
 	color: var(--text-normal);
 }
 
@@ -366,7 +366,7 @@ If your plugin does not need CSS, delete this file.
 	margin: 0;
 	background: transparent;
 	border: none;
-	border-radius: 3px;
+	border-radius: var(--radius-s);
 	color: var(--text-muted);
 	cursor: pointer;
 }
@@ -394,8 +394,8 @@ If your plugin does not need CSS, delete this file.
 }
 
 .agent-client-tool-card-raw {
-	margin-top: 6px;
-	border-radius: 4px;
+	margin-top: var(--size-2-3);
+	border-radius: var(--radius-s);
 	background-color: var(--background-secondary);
 	border: 1px solid var(--background-modifier-border);
 	overflow: hidden;
@@ -471,15 +471,15 @@ If your plugin does not need CSS, delete this file.
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 4px;
+	gap: var(--size-2-2);
 	width: 100%;
-	padding: 4px 8px;
+	padding: var(--size-2-2) var(--size-4-2);
 	margin-top: 2px;
 	background-color: var(--background-secondary);
 	border: none;
 	border-top: 1px solid var(--background-modifier-border);
 	color: var(--text-muted);
-	font-size: 0.85em;
+	font-size: var(--font-ui-smaller);
 	cursor: pointer;
 }
 
@@ -498,10 +498,10 @@ If your plugin does not need CSS, delete this file.
 .agent-client-permission-card {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
-	padding: 8px 10px;
-	margin-top: 8px;
-	border-radius: 6px;
+	gap: var(--size-4-2);
+	padding: var(--size-4-2) var(--size-4-3);
+	margin-top: var(--size-4-2);
+	border-radius: var(--radius-m);
 	background-color: var(--background-secondary);
 	border: 1px solid var(--background-modifier-border);
 }
@@ -512,8 +512,8 @@ If your plugin does not need CSS, delete this file.
 }
 
 .agent-client-permission-card-label {
-	font-size: 0.85em;
-	font-weight: 600;
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-semibold);
 	color: var(--text-muted);
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
@@ -526,14 +526,14 @@ If your plugin does not need CSS, delete this file.
 }
 
 .agent-client-permission-option {
-	padding: 6px 12px;
-	border-radius: 4px;
+	padding: var(--size-2-3) var(--size-4-3);
+	border-radius: var(--radius-s);
 	background-color: var(--background-primary);
 	color: var(--text-normal);
 	border: 1px solid var(--background-modifier-border);
 	cursor: pointer;
-	font-size: 0.92em;
-	font-weight: 500;
+	font-size: var(--font-ui-medium);
+	font-weight: var(--font-medium);
 	min-width: 80px;
 	text-align: center;
 	transition:
@@ -961,11 +961,11 @@ If your plugin does not need CSS, delete this file.
 	padding: 1px 6px;
 	border: 1px solid var(--background-modifier-border);
 	border-bottom-width: 2px;
-	border-radius: 4px;
+	border-radius: var(--radius-s);
 	background-color: var(--background-secondary);
 	color: var(--text-normal);
 	font-family: var(--font-monospace);
-	font-size: 0.85em;
+	font-size: var(--font-ui-smaller);
 	line-height: 1.4;
 }
 
@@ -1136,7 +1136,7 @@ If your plugin does not need CSS, delete this file.
 	overflow-y: auto;
 	font-family: var(--font-interface);
 	font-size: var(--font-ui-medium);
-	line-height: 1.5;
+	line-height: var(--line-height-tight);
 }
 
 /*
@@ -1204,7 +1204,7 @@ If your plugin does not need CSS, delete this file.
 	padding: 1px 5px;
 	margin: 0 1px;
 	border: 1px solid rgba(var(--interactive-accent-rgb, 138, 92, 245), 0.25);
-	border-radius: 4px;
+	border-radius: var(--radius-s);
 	background-color: rgba(
 		var(--interactive-accent-rgb, 138, 92, 245),
 		0.08
@@ -1212,7 +1212,7 @@ If your plugin does not need CSS, delete this file.
 	color: var(--text-normal);
 	font-size: 0.88em;
 	font-family: var(--font-interface);
-	font-weight: 500;
+	font-weight: var(--font-medium);
 	line-height: 1.4;
 	cursor: pointer;
 	user-select: none;
@@ -1243,20 +1243,20 @@ If your plugin does not need CSS, delete this file.
 }
 
 .cm-mention-pill-label {
-	font-weight: 500;
+	font-weight: var(--font-medium);
 }
 
 /* Slash command — code-token style: monospace, tinted bg, small radius */
 .cm-slash-token {
 	color: var(--interactive-accent);
 	font-family: var(--font-monospace);
-	font-weight: 600;
+	font-weight: var(--font-semibold);
 	font-size: 0.92em;
 	background-color: rgba(
 		var(--interactive-accent-rgb, 138, 92, 245),
 		0.08
 	);
-	border-radius: 3px;
+	border-radius: var(--radius-s);
 	padding: 0 3px;
 }
 
