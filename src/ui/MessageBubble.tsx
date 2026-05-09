@@ -5,6 +5,7 @@ import type { ChatMessage, MessageContent } from "../types/chat";
 import type { AcpClient } from "../acp/acp-client";
 import type AgentClientPlugin from "../plugin";
 import { MarkdownRenderer } from "./shared/MarkdownRenderer";
+import { StreamingMarkdown } from "./shared/StreamingMarkdown";
 import { TerminalBlock } from "./TerminalBlock";
 import { ToolCallBlock } from "./ToolCallBlock";
 import { LucideIcon } from "./shared/IconButton";
@@ -154,6 +155,7 @@ interface ContentBlockProps {
 	plugin: AgentClientPlugin;
 	messageId?: string;
 	messageRole?: "user" | "assistant";
+	isStreaming?: boolean;
 	terminalClient?: AcpClient;
 	/** Callback to approve a permission request */
 	onApprovePermission?: (
@@ -167,15 +169,20 @@ function ContentBlock({
 	plugin,
 	messageId,
 	messageRole,
+	isStreaming,
 	terminalClient,
 	onApprovePermission,
 }: ContentBlockProps) {
 	switch (content.type) {
 		case "text":
-			// User messages: render with mention support
-			// Assistant messages: render as markdown
 			if (messageRole === "user") {
 				return <TextWithMentions text={content.text} plugin={plugin} />;
+			}
+			// Assistant text: streaming-safe renderer in-flight, swap to
+			// Obsidian's renderer once finalized so callouts/wikilinks/
+			// mermaid/dataview render with note parity.
+			if (isStreaming) {
+				return <StreamingMarkdown text={content.text} />;
 			}
 			return <MarkdownRenderer text={content.text} plugin={plugin} />;
 
@@ -289,6 +296,8 @@ function ContentBlock({
 export interface MessageBubbleProps {
 	message: ChatMessage;
 	plugin: AgentClientPlugin;
+	/** True only for the in-flight assistant message — drives streaming-safe markdown. */
+	isStreaming?: boolean;
 	terminalClient?: AcpClient;
 	/** Callback to approve a permission request */
 	onApprovePermission?: (
@@ -387,6 +396,7 @@ function groupContent(
 export const MessageBubble = React.memo(function MessageBubble({
 	message,
 	plugin,
+	isStreaming,
 	terminalClient,
 	onApprovePermission,
 }: MessageBubbleProps) {
@@ -411,6 +421,7 @@ export const MessageBubble = React.memo(function MessageBubble({
 									plugin={plugin}
 									messageId={message.id}
 									messageRole={message.role}
+									isStreaming={isStreaming}
 									terminalClient={terminalClient}
 									onApprovePermission={onApprovePermission}
 								/>
@@ -426,6 +437,7 @@ export const MessageBubble = React.memo(function MessageBubble({
 								plugin={plugin}
 								messageId={message.id}
 								messageRole={message.role}
+								isStreaming={isStreaming}
 								terminalClient={terminalClient}
 								onApprovePermission={onApprovePermission}
 							/>

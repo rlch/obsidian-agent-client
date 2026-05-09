@@ -198,6 +198,11 @@ export function MessageList({
 			>
 				{virtualItems.map((virtualItem) => {
 					const message = messages[virtualItem.index];
+					const isLast = virtualItem.index === messages.length - 1;
+					const isStreaming =
+						isSending &&
+						isLast &&
+						message.role === "assistant";
 					return (
 						<div
 							key={message.id}
@@ -215,6 +220,7 @@ export function MessageList({
 							<MessageBubble
 								message={message}
 								plugin={plugin}
+								isStreaming={isStreaming}
 								terminalClient={terminalClient}
 								onApprovePermission={onApprovePermission}
 							/>
