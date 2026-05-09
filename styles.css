@@ -1000,22 +1000,31 @@ If your plugin does not need CSS, delete this file.
 }
 
 /* Auto-mention inline display */
+/* Auto-mention chip — discreet pill at the top of the composer indicating
+ * the active note is being attached as context. Was rendering as a banner
+ * with note-text-size font; matches the inline mention pill style now. */
 .agent-client-auto-mention-inline {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
-	gap: 4px;
-	padding: 6px 12px;
+	justify-content: flex-start;
+	gap: var(--size-2-2);
+	padding: 6px var(--size-4-3) 0 var(--size-4-3);
 	background-color: transparent;
 }
 
 .agent-client-mention-badge {
-	background-color: transparent;
-	color: var(--interactive-accent-hover);
-	border-radius: 3px;
-	font-size: var(--font-text-size);
-	font-weight: 500;
-	line-height: var(--line-height-normal);
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	padding: 1px 5px;
+	border: 1px solid rgba(var(--interactive-accent-rgb), 0.25);
+	border-radius: var(--radius-s);
+	background-color: rgba(var(--interactive-accent-rgb), 0.08);
+	color: var(--text-normal);
+	font-family: var(--font-interface);
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-medium);
+	line-height: 1.4;
 	cursor: default;
 	user-select: none;
 	white-space: nowrap;
@@ -1026,6 +1035,8 @@ If your plugin does not need CSS, delete this file.
 
 .agent-client-mention-badge.agent-client-disabled {
 	color: var(--text-faint);
+	border-color: var(--background-modifier-border);
+	background-color: transparent;
 	text-decoration: line-through;
 }
 
@@ -1134,14 +1145,14 @@ If your plugin does not need CSS, delete this file.
  * still drive the auto-height routine.
  */
 .agent-client-chat-input-composer.agent-client-chat-input-textarea {
-	padding: 0;
+	padding: 0 !important;
 	display: block;
 	min-height: 36px;
 	max-height: 300px;
 	overflow-y: auto;
-	font-family: var(--font-interface);
-	font-size: var(--font-ui-medium);
-	line-height: var(--line-height-tight);
+	font-family: var(--font-interface) !important;
+	font-size: var(--font-ui-medium) !important;
+	line-height: var(--line-height-tight) !important;
 }
 
 /*
@@ -1154,6 +1165,9 @@ If your plugin does not need CSS, delete this file.
 	height: auto;
 }
 
+/* Note: !important is required on font/line-height because Obsidian also
+ * uses CM6 for note editing and sets .cm-content / .cm-line rules globally
+ * with higher specificity than a single class selector here would muster. */
 .agent-client-chat-input-composer .cm-editor {
 	background-color: transparent;
 	height: 100%;
@@ -1164,24 +1178,25 @@ If your plugin does not need CSS, delete this file.
 }
 
 .agent-client-chat-input-composer .cm-scroller {
-	font-family: inherit;
-	font-size: inherit;
-	line-height: inherit;
+	font-family: var(--font-interface) !important;
+	font-size: var(--font-ui-medium) !important;
+	line-height: var(--line-height-tight) !important;
 	overflow: visible;
 }
 
 .agent-client-chat-input-composer .cm-content {
-	padding: 8px var(--size-4-3);
+	padding: 8px var(--size-4-3) !important;
 	caret-color: var(--text-normal);
-	font-family: inherit;
-	font-size: inherit;
-	line-height: inherit;
+	font-family: var(--font-interface) !important;
+	font-size: var(--font-ui-medium) !important;
+	line-height: var(--line-height-tight) !important;
 	min-height: 20px;
 }
 
 .agent-client-chat-input-composer .cm-line {
-	padding: 0;
-	line-height: inherit;
+	padding: 0 !important;
+	font-size: var(--font-ui-medium) !important;
+	line-height: var(--line-height-tight) !important;
 }
 
 .agent-client-chat-input-composer .cm-cursor,
@@ -1191,9 +1206,9 @@ If your plugin does not need CSS, delete this file.
 
 .agent-client-chat-input-composer .cm-placeholder {
 	color: var(--text-faint);
-	font-family: inherit;
-	font-size: inherit;
-	line-height: inherit;
+	font-family: var(--font-interface) !important;
+	font-size: var(--font-ui-medium) !important;
+	line-height: var(--line-height-tight) !important;
 }
 
 /*
