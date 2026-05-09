@@ -316,6 +316,207 @@ If your plugin does not need CSS, delete this file.
 	margin-top: 4px;
 }
 
+/* ===== Tool Call Card (Zed-style: header + collapsible body) ===== */
+
+.agent-client-tool-card {
+	margin: 6px 0;
+	padding: 8px 10px;
+	background-color: var(--background-primary-alt, transparent);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	font-size: 0.92em;
+	user-select: text;
+	overflow: hidden;
+}
+
+.agent-client-tool-card-pending,
+.agent-client-tool-card-in_progress {
+	border-left: 2px solid rgba(var(--color-yellow-rgb), 0.7);
+}
+
+.agent-client-tool-card-completed.agent-client-tool-card-readonly {
+	border-left: 2px solid var(--background-modifier-border);
+}
+
+.agent-client-tool-card-completed:not(.agent-client-tool-card-readonly) {
+	border-left: 2px solid rgba(var(--color-green-rgb), 0.5);
+}
+
+.agent-client-tool-card-failed {
+	border-left: 2px solid rgba(var(--color-red-rgb), 0.7);
+}
+
+.agent-client-tool-card-header {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
+}
+
+.agent-client-tool-card-icon {
+	flex-shrink: 0;
+	display: inline-flex;
+	color: var(--text-muted);
+}
+
+.agent-client-tool-card-icon svg {
+	width: 14px;
+	height: 14px;
+}
+
+.agent-client-tool-card-verb {
+	flex-shrink: 0;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.agent-client-tool-card-target {
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--text-muted);
+	font-family: var(--font-monospace);
+	font-size: 0.92em;
+}
+
+.agent-client-tool-card-disclosure {
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2px;
+	margin: 0;
+	background: transparent;
+	border: none;
+	border-radius: 3px;
+	color: var(--text-muted);
+	cursor: pointer;
+}
+
+.agent-client-tool-card-disclosure:hover {
+	background-color: var(--background-modifier-hover);
+	color: var(--text-normal);
+}
+
+.agent-client-tool-card-disclosure svg {
+	width: 14px;
+	height: 14px;
+}
+
+.agent-client-tool-card-locations {
+	display: block;
+	margin-top: 4px;
+	color: var(--text-muted);
+	font-family: var(--font-monospace);
+	font-size: 0.85em;
+}
+
+.agent-client-tool-card-location {
+	display: block;
+}
+
+.agent-client-tool-card-raw {
+	margin-top: 6px;
+	border-radius: 4px;
+	background-color: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	overflow: hidden;
+}
+
+.agent-client-tool-card-raw pre {
+	margin: 0;
+	padding: 8px 10px;
+	font-family: var(--font-monospace);
+	font-size: 0.85em;
+	white-space: pre-wrap;
+	word-break: break-word;
+	color: var(--text-normal);
+	max-height: 240px;
+	overflow: auto;
+}
+
+/* Status pill (compact icon badge) */
+
+.agent-client-status-pill {
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	border-radius: 9px;
+	background-color: transparent;
+}
+
+.agent-client-status-pill svg {
+	width: 12px;
+	height: 12px;
+}
+
+.agent-client-status-pill-success {
+	background-color: rgba(var(--color-green-rgb), 0.15);
+	color: var(--color-green);
+}
+
+.agent-client-status-pill-error {
+	background-color: rgba(var(--color-red-rgb), 0.15);
+	color: var(--color-red);
+}
+
+.agent-client-status-pill-pending {
+	background-color: rgba(var(--color-yellow-rgb), 0.15);
+	color: var(--color-yellow);
+}
+
+.agent-client-status-pill-pending svg,
+.agent-client-status-pill-muted svg {
+	animation: agent-client-spin 1.4s linear infinite;
+}
+
+.agent-client-status-pill-muted {
+	background-color: var(--background-modifier-border);
+	color: var(--text-muted);
+}
+
+@keyframes agent-client-spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* Diff expand bar */
+
+.agent-client-diff-expand-bar {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	width: 100%;
+	padding: 4px 8px;
+	margin-top: 2px;
+	background-color: var(--background-secondary);
+	border: none;
+	border-top: 1px solid var(--background-modifier-border);
+	color: var(--text-muted);
+	font-size: 0.85em;
+	cursor: pointer;
+}
+
+.agent-client-diff-expand-bar:hover {
+	background-color: var(--background-modifier-hover);
+	color: var(--text-normal);
+}
+
+.agent-client-diff-expand-icon svg {
+	width: 12px;
+	height: 12px;
+}
+
 /* ===== Permission Request Buttons ===== */
 .agent-client-permission-option {
 	padding: 8px 16px !important;
