@@ -956,8 +956,11 @@ export function InputArea({
 		}
 	}, [restoredMessage, onRestoredMessageConsumed, inputValue, onInputChange]);
 
-	// Placeholder text
-	const placeholder = `Message ${agentLabel} - @ to mention notes${availableCommands.length > 0 ? ", / for commands" : ""}`;
+	// Short placeholder so it fits in the sidebar without wrapping. CM6
+	// ties the caret height to the cm-line that contains the placeholder;
+	// a wrapped placeholder produced a two-line caret. Hints for @/ live
+	// in the empty-state in MessageList instead of being duplicated here.
+	const placeholder = `Message ${agentLabel}…`;
 
 	return (
 		<div className="agent-client-chat-input-container">

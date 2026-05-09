@@ -1016,15 +1016,15 @@ If your plugin does not need CSS, delete this file.
 	display: inline-flex;
 	align-items: center;
 	gap: 3px;
-	padding: 1px 5px;
+	padding: 1px 6px;
 	border: 1px solid rgba(var(--interactive-accent-rgb), 0.25);
 	border-radius: var(--radius-s);
 	background-color: rgba(var(--interactive-accent-rgb), 0.08);
 	color: var(--text-normal);
 	font-family: var(--font-interface);
-	font-size: var(--font-ui-smaller);
+	font-size: 12px;
 	font-weight: var(--font-medium);
-	line-height: 1.4;
+	line-height: 16px;
 	cursor: default;
 	user-select: none;
 	white-space: nowrap;
