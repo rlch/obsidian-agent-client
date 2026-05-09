@@ -1,7 +1,7 @@
 import * as React from "react";
 const { useEffect, useImperativeHandle, useLayoutEffect, useRef, forwardRef } =
 	React;
-import { EditorState, type Extension } from "@codemirror/state";
+import { EditorState, type Extension, Prec } from "@codemirror/state";
 import { EditorView, keymap, placeholder } from "@codemirror/view";
 import { history, defaultKeymap, historyKeymap } from "@codemirror/commands";
 import type AgentClientPlugin from "../../plugin";
@@ -73,6 +73,26 @@ export const ChatComposer = forwardRef<ComposerHandle, ChatComposerProps>(
 
 			const extensions: Extension[] = [
 				history(),
+				/*
+				 * Parent-owned keymap runs at highest precedence so the
+				 * popup nav (Enter to select, Ctrl+N/P + arrows to move,
+				 * Escape to close, Tab to commit) and the send shortcut
+				 * (Enter/Cmd+Enter) win over CM6's defaults
+				 * (Enter→insertNewlineAndIndent, Ctrl-P→cursorLineUp,
+				 * Ctrl-N→cursorLineDown, etc.). The handler still calls
+				 * onKeyDown unconditionally so the parent decides whether
+				 * to preventDefault — when nothing in the parent matches
+				 * the key, defaultPrevented is false, returning false and
+				 * letting CM6's keymap handle it normally.
+				 */
+				Prec.highest(
+					EditorView.domEventHandlers({
+						keydown: (event, _view) => {
+							onKeyDownRef.current?.(event);
+							return event.defaultPrevented;
+						},
+					}),
+				),
 				keymap.of([...defaultKeymap, ...historyKeymap]),
 				EditorView.lineWrapping,
 				placeholder(placeholderText ?? ""),
@@ -88,10 +108,6 @@ export const ChatComposer = forwardRef<ComposerHandle, ChatComposerProps>(
 					onChangeRef.current?.(text, cursor);
 				}),
 				EditorView.domEventHandlers({
-					keydown: (event, _view) => {
-						onKeyDownRef.current?.(event);
-						return event.defaultPrevented;
-					},
 					paste: (event) => {
 						if (onPaste) {
 							onPaste(event);
