@@ -1151,8 +1151,8 @@ If your plugin does not need CSS, delete this file.
 	max-height: 300px;
 	overflow-y: auto;
 	font-family: var(--font-interface) !important;
-	font-size: var(--font-ui-medium) !important;
-	line-height: var(--line-height-tight) !important;
+	font-size: 13px !important;
+	line-height: 20px !important;
 }
 
 /*
@@ -1165,9 +1165,15 @@ If your plugin does not need CSS, delete this file.
 	height: auto;
 }
 
-/* Note: !important is required on font/line-height because Obsidian also
- * uses CM6 for note editing and sets .cm-content / .cm-line rules globally
- * with higher specificity than a single class selector here would muster. */
+/*
+ * Hardcoded 13px / 20px because Obsidian uses CM6 for note editing too and
+ * its .cm-content / .cm-line / .cm-scroller rules win on specificity even
+ * with !important against tokens — the user's theme can resolve
+ * --font-ui-medium to anywhere from 13–18px, and the previous attempt let
+ * it land at ~18px. Fixed pixel values guarantee the cursor measures one
+ * line tall (20px) instead of inheriting whatever the placeholder wrap
+ * inflates the line to.
+ */
 .agent-client-chat-input-composer .cm-editor {
 	background-color: transparent;
 	height: 100%;
@@ -1179,8 +1185,8 @@ If your plugin does not need CSS, delete this file.
 
 .agent-client-chat-input-composer .cm-scroller {
 	font-family: var(--font-interface) !important;
-	font-size: var(--font-ui-medium) !important;
-	line-height: var(--line-height-tight) !important;
+	font-size: 13px !important;
+	line-height: 20px !important;
 	overflow: visible;
 }
 
@@ -1188,15 +1194,15 @@ If your plugin does not need CSS, delete this file.
 	padding: 8px var(--size-4-3) !important;
 	caret-color: var(--text-normal);
 	font-family: var(--font-interface) !important;
-	font-size: var(--font-ui-medium) !important;
-	line-height: var(--line-height-tight) !important;
+	font-size: 13px !important;
+	line-height: 20px !important;
 	min-height: 20px;
 }
 
 .agent-client-chat-input-composer .cm-line {
 	padding: 0 !important;
-	font-size: var(--font-ui-medium) !important;
-	line-height: var(--line-height-tight) !important;
+	font-size: 13px !important;
+	line-height: 20px !important;
 }
 
 .agent-client-chat-input-composer .cm-cursor,
@@ -1204,11 +1210,23 @@ If your plugin does not need CSS, delete this file.
 	border-left-color: var(--text-normal);
 }
 
+/*
+ * Placeholder must NOT wrap — when it wraps, the cm-line that contains it
+ * measures multi-line tall, and CM6 sizes the caret to match the line. So
+ * a long placeholder string would stretch the cursor to 2+ line-heights.
+ * Truncate with ellipsis instead.
+ */
 .agent-client-chat-input-composer .cm-placeholder {
 	color: var(--text-faint);
 	font-family: var(--font-interface) !important;
-	font-size: var(--font-ui-medium) !important;
-	line-height: var(--line-height-tight) !important;
+	font-size: 13px !important;
+	line-height: 20px !important;
+	white-space: nowrap !important;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
+	display: inline-block;
+	vertical-align: top;
 }
 
 /*
